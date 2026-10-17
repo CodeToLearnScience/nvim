@@ -1,6 +1,6 @@
 # Neovim configuration
 
-A lightweight, modular Lua configuration managed by lazy.nvim, with tools for JavaScript, TypeScript, and Rust development.
+A lightweight, modular Lua configuration managed by lazy.nvim, with tools for JavaScript, TypeScript, Rust, and Lua development.
 
 ## Features
 
@@ -9,7 +9,7 @@ A lightweight, modular Lua configuration managed by lazy.nvim, with tools for Ja
 | Plugin management | lazy.nvim bootstraps itself and installs the configured plugins on first launch. |
 | Editing | Absolute and relative line numbers, two-space indentation, spaces instead of tabs, smart indentation, case-insensitive search with smart case, and true-color support. |
 | File navigation | Oil provides an editable directory buffer; Telescope searches files, file contents, open buffers, recent files, and help. |
-| Language support | Native Neovim LSP configurations enable `ts_ls` and `rust_analyzer`, with hover, definitions, references, rename, code actions, and symbol search. Language servers must be installed separately. |
+| Language support | Native Neovim LSP configurations enable `ts_ls`, `rust_analyzer`, and `lua_ls`, with hover, definitions, references, rename, code actions, and symbol search. Mason installs the servers automatically. Lazydev supplies Neovim API and plugin library support while editing Lua configuration files. |
 | Diagnostics | Inline messages, gutter signs, underlines, severity sorting, floating details, and navigation between diagnostics. Diagnostics do not refresh during insert mode. |
 | Completion | nvim-cmp offers language-server, snippet, buffer, and filesystem-path suggestions. |
 | Snippets | LuaSnip loads VS Code-style snippets from friendly-snippets and supports expanding snippets and jumping through placeholders. |
@@ -75,7 +75,7 @@ After plugins are installed, restart Neovim. mason-tool-installer checks for mis
 
 | Tools | Mason packages |
 | --- | --- |
-| Language servers | `typescript-language-server`, `rust-analyzer` |
+| Language servers | `typescript-language-server`, `rust-analyzer`, `lua-language-server` |
 | Formatters | `stylua`, `prettier` |
 | Debug adapters | `codelldb`, `js-debug-adapter` |
 
@@ -90,13 +90,22 @@ The tool list lives in `lua/plugins/mason.lua`. Existing tools are left at their
 
 Mason adds its executables to Neovim's `PATH`. Language-server configuration lives in `lua/plugins/lsp.lua`, which loads Mason and completion capabilities before enabling the servers. No mason-lspconfig integration is needed. Rust itself and rustfmt remain managed by rustup; install the formatter with `rustup component add rustfmt`. Homebrew/system tools such as Neovim, Node.js, ripgrep, fd, and the Tree-sitter CLI are installed separately using the prerequisites above.
 
-Only `ts_ls` and `rust_analyzer` are enabled here. Lua has snippets and a formatter, but no configured Lua language server. To add another language server, install it and enable its configuration in `lua/plugins/lsp.lua`.
+`ts_ls`, `rust_analyzer`, and `lua_ls` are enabled here. Lua includes language-server completion and diagnostics, Neovim API support through lazydev, snippets, Tree-sitter highlighting, and StyLua formatting. To add another language server, install it and enable its configuration in `lua/plugins/lsp.lua`.
 
 ### 5. Check the setup
 
-Run `:checkhealth`, `:checkhealth mason`, and `:checkhealth vim.lsp` to investigate missing tools. Use `:ConformInfo` to check formatter availability. Open a JavaScript, TypeScript, or Rust project file to check that its language server attaches.
+Run `:checkhealth`, `:checkhealth mason`, and `:checkhealth vim.lsp` to investigate missing tools. Use `:ConformInfo` to check formatter availability. Open a JavaScript, TypeScript, Rust, or Lua project file to check that its language server attaches.
 
 Tree-sitter requires `tree-sitter`, a C compiler, `curl`, and `tar` on your `PATH`. The macOS prerequisites above provide these tools. Initial parser installation runs asynchronously; highlighting starts when installation completes. Use `:checkhealth nvim-treesitter` to diagnose installation problems and `:TSUpdate` to update parsers.
+
+If parser installation reports `ENOENT` for `tree-sitter`, the CLI is missing from Neovim's `PATH`. On macOS, run `brew install tree-sitter`. With a Rust toolchain installed (including on Linux), you can instead run:
+
+```sh
+cargo install tree-sitter-cli --version 0.26.7 --locked
+tree-sitter --version
+```
+
+Ensure `~/.cargo/bin` is on your shell's `PATH` for the Cargo installation. Restart Neovim and run `:TSInstall vimdoc` to retry the failed parser. Check `:echo exepath('tree-sitter')` if Neovim still cannot find the executable.
 
 ## Keybindings
 

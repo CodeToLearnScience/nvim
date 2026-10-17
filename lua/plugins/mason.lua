@@ -12,6 +12,7 @@ return {
       ensure_installed = {
         "typescript-language-server",
         "rust-analyzer",
+        "lua-language-server",
         "stylua",
         "prettier",
         "codelldb",
