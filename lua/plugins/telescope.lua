@@ -56,7 +56,7 @@ return {
 			},
 
 			{
-				"<leader>lr",
+				"<leader>lR",
 				function()
 					require("telescope.builtin").lsp_references()
 				end,

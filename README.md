@@ -123,7 +123,8 @@ In an Oil buffer, edit directory entries and use `:w` to apply filesystem change
 | `gd` | Go to definition |
 | `gr` | Find references using the native LSP action |
 | `<Space>lD` | Find definitions with Telescope |
-| `<Space>lr` | Rename symbol in an LSP-attached buffer; also assigned globally to Telescope references (see below) |
+| `<Space>lr` | Rename symbol |
+| `<Space>lR` | Find references with Telescope |
 | `<Space>la` | Show code actions |
 | `<Space>lf` | Format the buffer with Conform, using LSP formatting as a fallback |
 | `<Space>ls` | Search document symbols |
@@ -131,7 +132,7 @@ In an Oil buffer, edit directory entries and use `:w` to apply filesystem change
 | `[d` / `]d` | Previous / next diagnostic |
 | `<Space>ld` | Show diagnostic details in a floating window |
 
-`<Space>lr` has two assignments: Telescope registers a global references mapping, while `LspAttach` registers a buffer-local rename mapping. The buffer-local mapping takes precedence once attached. Use `gr` for references, or `:Telescope lsp_references` for the Telescope picker.
+Use `<Space>lr` for rename and `<Space>lR` for the Telescope references picker. `gr` also finds references using the native LSP action.
 
 The format mapping is also registered on `LspAttach`. For a Lua buffer without an attached server, format manually with:
 
