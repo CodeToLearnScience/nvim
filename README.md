@@ -17,7 +17,10 @@ A lightweight, modular Lua configuration managed by lazy.nvim, with tools for Ja
 | Snippets | LuaSnip loads VS Code-style snippets from friendly-snippets and supports expanding snippets and jumping through placeholders. |
 | Editing helpers | Automatic bracket/quote pairing with nvim-autopairs and comment toggling with Comment.nvim. |
 | Formatting | Conform formats Lua with StyLua, Rust with rustfmt, and web/configuration files with Prettier. Format a buffer or visual selection manually, with an attached LSP formatter as a fallback. Format-on-save is not configured. |
-| Git | Gitsigns shows changes in the gutter and supports navigating, previewing, staging, and resetting hunks. |
+| Git | Gitsigns shows changes in the gutter and supports navigating, previewing, staging, and resetting hunks. Diffview adds changed-file review, revision comparison, file history, and conflict resolution. |
+| Bookmarks | Harpoon keeps a small persistent list of files per working directory, with direct jumps and an editable menu. |
+| Surround editing | nvim-surround adds, changes, and removes quotes, brackets, tags, and other delimiters. |
+| Health check | `:ConfigHealth` checks external executables, Tree-sitter CLI compatibility, configured Mason packages, and running language servers. |
 | Terminal | ToggleTerm opens a horizontal terminal with a height of 15 lines. |
 | Debugging | nvim-dap and nvim-dap-ui provide breakpoints, stepping, a debugger UI, Rust debugging through CodeLLDB, and JavaScript/compiled TypeScript debugging through the Node debug adapter. |
 | Status line | Lualine displays mode, branch, diagnostics, filename, LSP status, filetype, progress, and cursor position. |
@@ -71,7 +74,7 @@ git clone https://github.com/CodeToLearnScience/nvim.git ~/.config/nvim
 nvim
 ```
 
-On first launch, lazy.nvim downloads itself and installs the plugins. An internet connection is required. Wait for installation and build tasks to finish, then restart Neovim. Use `:Lazy` to inspect installation status or `:Lazy sync` to install and update plugins.
+On first launch, lazy.nvim downloads itself and installs the plugins. An internet connection is required. Wait for installation and build tasks to finish, then restart Neovim. Use `:Lazy` to inspect installation status. The committed `lazy-lock.json` records plugin revisions; use `:Lazy restore` to return to those versions. Use `:Lazy update` only when you intend to upgrade plugins and review the resulting lockfile changes.
 
 ### 4. Let the development tools install
 
@@ -98,7 +101,7 @@ Mason adds its executables to Neovim's `PATH`. Language-server configuration liv
 
 ### 5. Check the setup
 
-Run `:checkhealth`, `:checkhealth mason`, and `:checkhealth vim.lsp` to investigate missing tools. Use `:ConformInfo` to check formatter availability. Open a JavaScript, TypeScript, Rust, or Lua project file to check that its language server attaches.
+Run `:ConfigHealth` for the combined configuration report, or `:checkhealth`, `:checkhealth mason`, and `:checkhealth vim.lsp` to investigate missing tools. Use `:ConformInfo` to check formatter availability. Open a JavaScript, TypeScript, Rust, or Lua project file to check that its language server attaches.
 
 Tree-sitter requires `tree-sitter`, a C compiler, `curl`, and `tar` on your `PATH`. The macOS prerequisites above provide these tools. Initial parser installation runs asynchronously; highlighting starts when installation completes. Use `:checkhealth nvim-treesitter` to diagnose installation problems and `:TSUpdate` to update parsers.
 
@@ -266,6 +269,36 @@ Comment.nvim uses its default mappings: `gcc` toggles the current line comment, 
 | `<Space>hs` | Stage the current hunk |
 | `<Space>hu` | Reset the current hunk, discarding its unstaged changes |
 
+### Git review and conflict resolution
+
+| Key | Action |
+| --- | --- |
+| `<Space>gd` | Open changed-file review, including conflicts during a merge/rebase |
+| `<Space>gc` | Close Diffview |
+| `<Space>gb` | Prompt for a revision/range to compare, such as `origin/main...HEAD` |
+| `<Space>gh` / `<Space>gf` | Project / current-file Git history |
+| `<Space>gp` in a diff view | Focus the changed-files panel |
+| Tab / Shift-Tab in Diffview | Next / previous entry |
+| `]x` / `[x` in a diff view | Next / previous conflict |
+| `<Space>gO` / `<Space>gT` in a diff view | Choose ours / theirs for the current conflict |
+
+Requires Git 2.31 or newer. Use j/k and Enter in the file/history panels to select entries. During a merge or rebase, Diffview opens a three-way conflict view. Resolve the result buffer and save it, then stage the resolved file and continue the Git operation yourself. The mappings do not commit or continue a merge automatically. Existing `<Space>h` mappings still operate on Git hunks.
+
+### Project bookmarks
+
+| Key | Action |
+| --- | --- |
+| `<Space>ma` | Add the current file to bookmarks |
+| `<Space>mm` | Open the editable bookmark menu |
+| `<Space>m1` through `<Space>m4` | Jump to bookmark 1 through 4 |
+| `<Space>mn` / `<Space>mp` | Next / previous bookmark |
+
+Bookmarks are grouped by working directory and persisted by Harpoon outside the repository. Start Neovim from the project root to keep a consistent list. In the menu, edit/reorder/delete lines and close it to sync the list; Enter opens the selected file.
+
+### Surround editing
+
+Use normal-mode operators such as `ysiw"` to surround a word with double quotes, `cs"'` to change double quotes to single quotes, and `ds"` to remove surrounding double quotes. In visual mode, `S` followed by a delimiter surrounds the selection. See `:help nvim-surround` for bracket, tag, and custom delimiter operations.
+
 ### Debugging
 
 | Key | Action |
@@ -296,4 +329,4 @@ lua/config/lazy.lua      lazy.nvim bootstrap and plugin discovery
 lua/plugins/             Plugin specifications and feature configuration
 ```
 
-Add or edit plugin specifications under `lua/plugins/`. `lazy-lock.json` is ignored by Git, so each installation keeps its own local plugin lockfile; fresh clones can resolve different plugin versions. Use `:Lazy` to review updates and plugin errors.
+Add or edit plugin specifications under `lua/plugins/`. Keep `lazy-lock.json` in Git alongside configuration changes so fresh installations use the recorded plugin revisions. Use `:Lazy restore` after pulling changes to match the lockfile, and `:Lazy update` for intentional upgrades. Review and commit lockfile changes with the corresponding configuration changes. This locks plugin code; Mason tools, project dependencies, and external executables have separate version management.
