@@ -85,7 +85,7 @@ cd /path/to/your/project
 nvim .
 ```
 
-Mason adds its executables to Neovim's `PATH`. There is no automatic tool-installation list or mason-lspconfig integration in this configuration; the similarly named Lua file only enables the LSP configurations. You can inspect installed tools with `:Mason`. See [Mason's requirements and commands](https://github.com/mason-org/mason.nvim#requirements) for package-specific dependencies.
+Mason adds its executables to Neovim's `PATH`. Language-server configuration lives in `lua/plugins/lsp.lua`, which loads Mason and completion capabilities before enabling the servers. There is no automatic tool-installation list or mason-lspconfig integration in this configuration. You can inspect installed tools with `:Mason`. See [Mason's requirements and commands](https://github.com/mason-org/mason.nvim#requirements) for package-specific dependencies.
 
 Only `ts_ls` and `rust_analyzer` are enabled here. Lua has snippets and a formatter, but no configured Lua language server. To add another language server, install it and enable its configuration in `lua/plugins/lsp.lua`.
 
