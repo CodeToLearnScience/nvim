@@ -22,7 +22,7 @@ A lightweight, modular Lua configuration managed by lazy.nvim, with tools for Ja
 | Keybinding help | Which-key displays available mappings and groups for search, LSP, Git hunks, and debugging. |
 | Tool management | Mason provides an interface for installing language servers, formatters, and debug adapters. Tool installation is manual. |
 | Project inspection | `:ProjectRoot` prints the nearest root containing `package.json`, `Cargo.toml`, or `.git`. It does not change the working directory. |
-| Tree-sitter | A plugin specification lists JavaScript, TypeScript, TSX, Rust, Lua, Vim, Vimdoc, and query parsers, with a `:TSUpdate` build hook. See the setup limitation below. |
+| Tree-sitter | Installs JavaScript, TypeScript, TSX, Rust, Lua, Vim, Vimdoc, and query parsers asynchronously and enables native syntax highlighting. Parsers are updated with the plugin through `:TSUpdate`. |
 
 ## Install on macOS
 
@@ -39,11 +39,11 @@ xcode-select --install
 Then install Neovim and the supporting tools:
 
 ```sh
-brew install neovim git ripgrep fd node stylua
+brew install neovim git ripgrep fd node stylua tree-sitter
 nvim --version
 ```
 
-Use a current stable Neovim release. The configuration uses the Neovim 0.11+ LSP API; plugins may require a newer patch or release as they evolve. See [nvim-lspconfig requirements](https://github.com/neovim/nvim-lspconfig#install).
+Use Neovim 0.12 or newer for the configured Tree-sitter `main` branch, and Tree-sitter CLI 0.26.1 or newer. Check `nvim --version` and `tree-sitter --version` before launching. See the [Tree-sitter requirements](https://github.com/nvim-treesitter/nvim-treesitter#requirements).
 
 `ripgrep` powers Telescope's live text search; `fd` supports file discovery. Node.js supplies the runtime and npm used by the TypeScript language server and JavaScript debugger. StyLua is the configured Lua formatter. A terminal with true-color support is recommended.
 
@@ -93,7 +93,7 @@ Only `ts_ls` and `rust_analyzer` are enabled here. Lua has snippets and a format
 
 Run `:checkhealth`, `:checkhealth mason`, and `:checkhealth vim.lsp` to investigate missing tools. Use `:ConformInfo` to check formatter availability. Open a JavaScript, TypeScript, or Rust project file to check that its language server attaches.
 
-The Tree-sitter specification currently passes parser options through lazy.nvim's `opts`, without explicit parser/highlighter initialization or a pinned plugin branch. Parser installation and highlighting are therefore not guaranteed by this configuration alone. If Tree-sitter reports setup errors, check the installed plugin's setup instructions and configure the matching API in `lua/plugins/treesitter.lua`.
+Tree-sitter requires `tree-sitter`, a C compiler, `curl`, and `tar` on your `PATH`. The macOS prerequisites above provide these tools. Initial parser installation runs asynchronously; highlighting starts when installation completes. Use `:checkhealth nvim-treesitter` to diagnose installation problems and `:TSUpdate` to update parsers.
 
 ## Keybindings
 
