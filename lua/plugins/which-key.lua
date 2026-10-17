@@ -5,6 +5,8 @@ return {
 
     opts = {
       spec = {
+        { "<leader>s", group = "Splits" },
+        { "<leader>b", group = "Buffers" },
         {
           "<leader>f",
           group = "Find",

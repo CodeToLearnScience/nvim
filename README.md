@@ -127,6 +127,23 @@ The leader key is **Space**. Unless noted otherwise, these mappings are used in 
 
 In an Oil buffer, edit directory entries and use `:w` to apply filesystem changes. In the terminal, use Neovim's `<C-\><C-n>` to return to normal mode before using normal-mode mappings.
 
+### Windows and buffers
+
+| Key | Action |
+| --- | --- |
+| `<C-h>` / `<C-j>` / `<C-k>` / `<C-l>` | Focus the window to the left / below / above / right |
+| `<Space>sv` | Create a vertical split |
+| `<Space>sh` | Create a horizontal split |
+| `<Space>se` | Equalize window sizes |
+| `<Space>sc` | Close the current window |
+| `<C-Up>` / `<C-Down>` | Increase / decrease window height by two lines |
+| `<C-Right>` / `<C-Left>` | Increase / decrease window width by two columns |
+| `<Space>bn` / `<Space>bp` | Next / previous listed buffer |
+| `<Space>bb` | Switch to the alternate (previously used) buffer |
+| `<Space>bd` | Delete the current buffer with `:bdelete` |
+
+Window and buffer close actions do not force-discard unsaved changes. `:bdelete` can also close windows displaying that buffer. Use `<Space>fb` to choose a buffer with Telescope. On macOS, system shortcuts may intercept Ctrl-arrow keys; Neovim's built-in `<C-w>+`, `<C-w>-`, `<C-w>>`, and `<C-w><` also resize windows. These mappings apply in normal mode; leave terminal input mode first with `<C-\><C-n>`.
+
 ### Language support and diagnostics
 
 | Key | Action |

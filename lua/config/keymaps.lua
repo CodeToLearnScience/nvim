@@ -8,6 +8,28 @@ vim.keymap.set("n", "<leader>q", "<cmd>q<cr>", {
 	desc = "Quit",
 })
 
+-- Windows and splits. Keep <leader>w available for saving.
+vim.keymap.set("n", "<C-h>", "<C-w>h", { desc = "Focus left window" })
+vim.keymap.set("n", "<C-j>", "<C-w>j", { desc = "Focus window below" })
+vim.keymap.set("n", "<C-k>", "<C-w>k", { desc = "Focus window above" })
+vim.keymap.set("n", "<C-l>", "<C-w>l", { desc = "Focus right window" })
+
+vim.keymap.set("n", "<leader>sv", "<cmd>vsplit<cr>", { desc = "Split vertically" })
+vim.keymap.set("n", "<leader>sh", "<cmd>split<cr>", { desc = "Split horizontally" })
+vim.keymap.set("n", "<leader>se", "<C-w>=", { desc = "Equalize window sizes" })
+vim.keymap.set("n", "<leader>sc", "<cmd>close<cr>", { desc = "Close window" })
+
+vim.keymap.set("n", "<C-Up>", "<cmd>resize +2<cr>", { desc = "Increase window height" })
+vim.keymap.set("n", "<C-Down>", "<cmd>resize -2<cr>", { desc = "Decrease window height" })
+vim.keymap.set("n", "<C-Right>", "<cmd>vertical resize +2<cr>", { desc = "Increase window width" })
+vim.keymap.set("n", "<C-Left>", "<cmd>vertical resize -2<cr>", { desc = "Decrease window width" })
+
+-- Buffer deletion uses :bdelete so unsaved changes are protected.
+vim.keymap.set("n", "<leader>bn", "<cmd>bnext<cr>", { desc = "Next buffer" })
+vim.keymap.set("n", "<leader>bp", "<cmd>bprevious<cr>", { desc = "Previous buffer" })
+vim.keymap.set("n", "<leader>bb", "<cmd>buffer #<cr>", { desc = "Alternate buffer" })
+vim.keymap.set("n", "<leader>bd", "<cmd>bdelete<cr>", { desc = "Delete buffer" })
+
 vim.api.nvim_create_autocmd("LspAttach", {
 	callback = function(event)
 		vim.keymap.set("n", "K", vim.lsp.buf.hover, {
