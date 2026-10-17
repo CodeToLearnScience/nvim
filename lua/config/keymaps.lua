@@ -39,6 +39,12 @@ vim.keymap.set("n", "<leader>cn", "<cmd>cnewer<cr>", { desc = "Newer quickfix li
 
 vim.api.nvim_create_autocmd("LspAttach", {
 	callback = function(event)
+        vim.keymap.set("n", "<leader>le", function()
+          vim.lsp.buf.code_action({
+            context = { only = { "source.fixAll.eslint" }, diagnostics = {} },
+            apply = true,
+          })
+        end, { buffer = event.buf, desc = "Apply ESLint fixes" })
         vim.keymap.set("n", "gi", vim.lsp.buf.implementation, { buffer = event.buf, desc = "Go to implementation" })
         vim.keymap.set("n", "gy", vim.lsp.buf.type_definition, { buffer = event.buf, desc = "Go to type definition" })
 		vim.keymap.set("n", "K", vim.lsp.buf.hover, {

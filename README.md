@@ -7,9 +7,11 @@ A lightweight, modular Lua configuration managed by lazy.nvim, with tools for Ja
 | Area | Included functionality |
 | --- | --- |
 | Plugin management | lazy.nvim bootstraps itself and installs the configured plugins on first launch. |
-| Editing | Absolute and relative line numbers, two-space indentation, spaces instead of tabs, smart indentation, case-insensitive search with smart case, and true-color support. |
+| Editing | Persistent undo, yank highlighting, last-cursor-position restoration, selection-preserving indentation, absolute and relative line numbers, two-space indentation, spaces instead of tabs, smart indentation, case-insensitive search with smart case, and true-color support. |
 | File navigation | Oil provides an editable directory buffer; Telescope searches files, file contents, open buffers, recent files, and help. |
-| Language support | Native Neovim LSP configurations enable `ts_ls`, `rust_analyzer`, and `lua_ls`, with hover, definitions, references, rename, code actions, and symbol search. Mason installs the servers automatically. Lazydev supplies Neovim API and plugin library support while editing Lua configuration files. |
+| Build and test | Overseer manages Cargo commands and discovered project tasks/npm scripts; vim-test runs nearest tests, file tests, suites, and previous tests in a terminal split. |
+| Project replacement | grug-far provides a searchable results preview and explicit replacement actions across project files. |
+| Language support | Native Neovim LSP configurations enable `ts_ls`, `rust_analyzer`, `lua_ls`, and `eslint`, with hover, definitions, references, rename, code actions, and symbol search. Mason installs the servers automatically. Lazydev supplies Neovim API and plugin library support while editing Lua configuration files. |
 | Diagnostics | Inline messages, gutter signs, underlines, severity sorting, floating details, and navigation between diagnostics. Diagnostics do not refresh during insert mode. |
 | Completion | nvim-cmp offers language-server, snippet, buffer, and filesystem-path suggestions. |
 | Snippets | LuaSnip loads VS Code-style snippets from friendly-snippets and supports expanding snippets and jumping through placeholders. |
@@ -77,7 +79,7 @@ After plugins are installed, restart Neovim. mason-tool-installer checks for mis
 
 | Tools | Mason packages |
 | --- | --- |
-| Language servers | `typescript-language-server`, `rust-analyzer`, `lua-language-server` |
+| Language servers | `typescript-language-server`, `rust-analyzer`, `lua-language-server`, `eslint-lsp` |
 | Formatters | `stylua`, `prettier` |
 | Debug adapters | `codelldb`, `js-debug-adapter` |
 
@@ -92,7 +94,7 @@ The tool list lives in `lua/plugins/mason.lua`. Existing tools are left at their
 
 Mason adds its executables to Neovim's `PATH`. Language-server configuration lives in `lua/plugins/lsp.lua`, which loads Mason and completion capabilities before enabling the servers. No mason-lspconfig integration is needed. Rust itself and rustfmt remain managed by rustup; install the formatter with `rustup component add rustfmt`. Homebrew/system tools such as Neovim, Node.js, ripgrep, fd, and the Tree-sitter CLI are installed separately using the prerequisites above.
 
-`ts_ls`, `rust_analyzer`, and `lua_ls` are enabled here. Lua includes language-server completion and diagnostics, Neovim API support through lazydev, snippets, Tree-sitter highlighting, and StyLua formatting. To add another language server, install it and enable its configuration in `lua/plugins/lsp.lua`.
+`ts_ls`, `rust_analyzer`, `lua_ls`, and `eslint` are enabled here. Lua includes language-server completion and diagnostics, Neovim API support through lazydev, snippets, Tree-sitter highlighting, and StyLua formatting. To add another language server, install it and enable its configuration in `lua/plugins/lsp.lua`.
 
 ### 5. Check the setup
 
@@ -156,6 +158,34 @@ Word and Git-file searches use the current file's Git root, falling back to its 
 In Telescope, use Tab to select multiple results, then Ctrl+q to keep them in quickfix while exploring files. The quickfix panel stays available until closed or replaced; its older lists can be revisited during the current session.
 
 Implementation, type, and call navigation require an attached language server and support for the requested operation. Tree-sitter movement and text objects require an installed parser and the textobjects plugin's queries; supported constructs vary by language. Use text objects in visual mode or after an operator, for example `vaf` to select a function or `cia` to change a parameter. Movements record jump history, so Ctrl+o returns to your previous location. On some terminals Ctrl+i is the same key as Tab.
+
+### Build tasks, tests, and project replacement
+
+| Key | Action |
+| --- | --- |
+| `<Space>rr` | Select a discovered project task, including npm scripts |
+| `<Space>ro` | Toggle the Overseer task list |
+| `<Space>ra` | Select a task action, such as rerun, stop, or inspect output |
+| `<Space>rc` / `<Space>rb` / `<Space>rt` | Run Cargo check / build / test |
+| `<Space>Tn` | Run the nearest test |
+| `<Space>Tf` | Run tests in the current file |
+| `<Space>Ts` | Run the test suite |
+| `<Space>Tl` | Rerun the last test |
+| `<Space>Tv` | Return to the last test file |
+| `<Space>le` | Apply available ESLint fixes in the current buffer |
+| `<Space>fR` | Open project search and replace |
+
+Task/test shortcuts save the current modified buffer before running. Save other edited files before testing changes across multiple files. Cargo task shortcuts use the current file's nearest `Cargo.toml`; the task picker uses its nearest Cargo/package/Git root, falling back to the working directory. Overseer exposes project-defined npm scripts so script names do not need to be hard-coded. Inspect task output and rerun or stop jobs through its task list.
+
+Focused tests use vim-test's runner detection for Cargo and supported JavaScript/TypeScript frameworks, including Jest and Vitest. Install your project's test dependencies first and launch Neovim from the crate/package root. In monorepos, use `:cd path/to/package` when necessary. If detection is ambiguous, set `vim.g["test#javascript#runner"] = "vitest"` (or `"jest"`) for your project. Test output appears in a terminal split in normal mode. Rust file-level test selection uses module filters; behavior can vary for integration tests and unusual module layouts. This integration provides command execution and terminal output, rather than a structured test tree.
+
+Mason automatically installs `eslint-lsp`, the language-server bridge. Each JS/TS project must also provide ESLint and a compatible configuration, for example via its existing development dependencies and `eslint.config.js`. The ESLint server supplies diagnostics and code actions alongside TypeScript. `<Space>le` applies supported ESLint fixes manually; no automatic fixes or format-on-save are enabled.
+
+Project replacement opens grug-far scoped to the current file's Git root (or nearest Cargo/package root). Enter Search and Replace text, review matches, and use the buffer's action help to apply replacements. With the default local leader (`\`), `\r` applies replacement and `\q` sends results to quickfix. Ripgrep syntax and ignore rules apply. Replacement writes files on disk; save current edits before applying it. Use Git diffs to review the result.
+
+### Editing conveniences
+
+Undo history is saved across editor restarts using Neovim's undo directory (`:set undodir?` shows its location). Yanked text briefly highlights, and reopening an existing file restores its last cursor position when a valid saved mark exists. In visual mode, `<` and `>` indent while retaining the selection. Cursor marks are persisted by Neovim's normal ShaDa behavior; undo and cursor history are separate from workspace sessions.
 
 ### Sessions
 

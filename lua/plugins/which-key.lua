@@ -5,6 +5,8 @@ return {
 
     opts = {
       spec = {
+        { "<leader>r", group = "Run tasks" },
+        { "<leader>T", group = "Tests" },
         { "<leader>p", group = "Sessions" },
         { "<leader>c", group = "Quickfix" },
         { "<leader>s", group = "Splits" },

@@ -13,6 +13,7 @@ return {
         "typescript-language-server",
         "rust-analyzer",
         "lua-language-server",
+        "eslint-lsp",
         "stylua",
         "prettier",
         "codelldb",
