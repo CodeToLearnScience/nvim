@@ -20,6 +20,7 @@ A lightweight, modular Lua configuration managed by lazy.nvim, with tools for Ja
 | Debugging | nvim-dap and nvim-dap-ui provide breakpoints, stepping, a debugger UI, Rust debugging through CodeLLDB, and JavaScript/compiled TypeScript debugging through the Node debug adapter. |
 | Status line | Lualine displays mode, branch, diagnostics, filename, LSP status, filetype, progress, and cursor position. |
 | Code navigation | Implementation/type jumps, call hierarchy, scoped search, persistent quickfix results, and Tree-sitter function/class/parameter text objects. |
+| Sessions | Persistence automatically saves workspace sessions on exit, with manual project restore, session selection, and last-session restore. |
 | Keybinding help | Which-key displays available mappings and groups for search, LSP, Git hunks, and debugging. |
 | Tool management | Mason and mason-tool-installer automatically install missing language servers, formatters, and debug adapters from the list in `lua/plugins/mason.lua`. Existing tools are not automatically upgraded. |
 | Project inspection | `:ProjectRoot` prints the nearest root containing `package.json`, `Cargo.toml`, or `.git`. It does not change the working directory. |
@@ -155,6 +156,21 @@ Word and Git-file searches use the current file's Git root, falling back to its 
 In Telescope, use Tab to select multiple results, then Ctrl+q to keep them in quickfix while exploring files. The quickfix panel stays available until closed or replaced; its older lists can be revisited during the current session.
 
 Implementation, type, and call navigation require an attached language server and support for the requested operation. Tree-sitter movement and text objects require an installed parser and the textobjects plugin's queries; supported constructs vary by language. Use text objects in visual mode or after an operator, for example `vaf` to select a function or `cia` to change a parameter. Movements record jump history, so Ctrl+o returns to your previous location. On some terminals Ctrl+i is the same key as Tab.
+
+### Sessions
+
+Persistence starts saving sessions once an existing file is opened. On exit, it saves the workspace if at least one named file buffer is present. Restore is manual, so launching Neovim does not automatically reopen a previous workspace.
+
+| Key | Action |
+| --- | --- |
+| `<Space>pr` | Restore the session for the current working directory and Git branch |
+| `<Space>ps` | Select a saved project session |
+| `<Space>pl` | Restore the most recently saved session |
+| `<Space>pd` | Disable automatic session saving for this run |
+
+Start Neovim from the project root so sessions are associated with that directory. Sessions are stored under `stdpath("state") .. "/sessions/"` (normally `~/.local/state/nvim/sessions/`), outside this repository. Git branch sessions are enabled; Persistence uses the directory session for `main`/`master` and as a fallback when a branch session does not exist. Selecting a session changes the working directory to that project.
+
+Sessions use Neovim's `sessionoptions` to restore file buffers, windows, tabs, and cursor positions. They do not save unsaved file contents or resume running terminals and debugger processes. Save your edits before restoring another workspace. Session saving does not delete an existing session when disabled with `<Space>pd`.
 
 ### Windows and buffers
 
