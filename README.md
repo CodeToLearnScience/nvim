@@ -19,6 +19,7 @@ A lightweight, modular Lua configuration managed by lazy.nvim, with tools for Ja
 | Terminal | ToggleTerm opens a horizontal terminal with a height of 15 lines. |
 | Debugging | nvim-dap and nvim-dap-ui provide breakpoints, stepping, a debugger UI, Rust debugging through CodeLLDB, and JavaScript/compiled TypeScript debugging through the Node debug adapter. |
 | Status line | Lualine displays mode, branch, diagnostics, filename, LSP status, filetype, progress, and cursor position. |
+| Code navigation | Implementation/type jumps, call hierarchy, scoped search, persistent quickfix results, and Tree-sitter function/class/parameter text objects. |
 | Keybinding help | Which-key displays available mappings and groups for search, LSP, Git hunks, and debugging. |
 | Tool management | Mason and mason-tool-installer automatically install missing language servers, formatters, and debug adapters from the list in `lua/plugins/mason.lua`. Existing tools are not automatically upgraded. |
 | Project inspection | `:ProjectRoot` prints the nearest root containing `package.json`, `Cargo.toml`, or `.git`. It does not change the working directory. |
@@ -126,6 +127,34 @@ The leader key is **Space**. Unless noted otherwise, these mappings are used in 
 | `<Space>t` | Toggle the horizontal terminal |
 
 In an Oil buffer, edit directory entries and use `:w` to apply filesystem changes. In the terminal, use Neovim's `<C-\><C-n>` to return to normal mode before using normal-mode mappings.
+
+### Navigation in large codebases
+
+| Key | Action |
+| --- | --- |
+| `<Space>fw` | Search the word under the cursor across the project |
+| `<Space>fd` | Prompt for a directory, then search its contents |
+| `<Space>fG` | Find Git-tracked files (requires a Git repository) |
+| `gi` | Go to implementations, such as implementations of a Rust trait |
+| `gy` | Go to the type definition |
+| `<Space>li` / `<Space>lo` | Show incoming / outgoing calls in Telescope |
+| `<C-q>` in Telescope | Send selected results, or all results if none are selected, to quickfix and open it |
+| `<Space>co` / `<Space>cc` | Open / close the quickfix results panel |
+| `]q` / `[q` | Next / previous quickfix result |
+| `<Space>cp` / `<Space>cn` | Older / newer quickfix result list |
+| `<C-o>` / `<C-i>` | Back / forward through Neovim's jump history |
+| `]m` / `[m` | Next / previous function start |
+| `]M` / `[M` | Next / previous function end |
+| `]c` / `[c` | Next / previous class-like construct |
+| `af` / `if` | Around / inside a function text object |
+| `ac` / `ic` | Around / inside a class text object |
+| `aa` / `ia` | Around / inside a parameter text object |
+
+Word and Git-file searches use the current file's Git root, falling back to its nearest Cargo/package root and then the working directory. Directory search accepts an absolute path or a path relative to Neovim's working directory. Text searches respect ripgrep's default ignore rules, so ignored build output and dependencies are excluded. Existing `<Space>fg` searches from the working directory.
+
+In Telescope, use Tab to select multiple results, then Ctrl+q to keep them in quickfix while exploring files. The quickfix panel stays available until closed or replaced; its older lists can be revisited during the current session.
+
+Implementation, type, and call navigation require an attached language server and support for the requested operation. Tree-sitter movement and text objects require an installed parser and the textobjects plugin's queries; supported constructs vary by language. Use text objects in visual mode or after an operator, for example `vaf` to select a function or `cia` to change a parameter. Movements record jump history, so Ctrl+o returns to your previous location. On some terminals Ctrl+i is the same key as Tab.
 
 ### Windows and buffers
 

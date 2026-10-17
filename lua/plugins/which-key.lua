@@ -5,6 +5,7 @@ return {
 
     opts = {
       spec = {
+        { "<leader>c", group = "Quickfix" },
         { "<leader>s", group = "Splits" },
         { "<leader>b", group = "Buffers" },
         {

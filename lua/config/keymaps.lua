@@ -30,8 +30,17 @@ vim.keymap.set("n", "<leader>bp", "<cmd>bprevious<cr>", { desc = "Previous buffe
 vim.keymap.set("n", "<leader>bb", "<cmd>buffer #<cr>", { desc = "Alternate buffer" })
 vim.keymap.set("n", "<leader>bd", "<cmd>bdelete<cr>", { desc = "Delete buffer" })
 
+vim.keymap.set("n", "<leader>co", "<cmd>copen<cr>", { desc = "Open quickfix results" })
+vim.keymap.set("n", "<leader>cc", "<cmd>cclose<cr>", { desc = "Close quickfix results" })
+vim.keymap.set("n", "]q", "<cmd>cnext<cr>", { desc = "Next quickfix result" })
+vim.keymap.set("n", "[q", "<cmd>cprevious<cr>", { desc = "Previous quickfix result" })
+vim.keymap.set("n", "<leader>cp", "<cmd>colder<cr>", { desc = "Previous quickfix list" })
+vim.keymap.set("n", "<leader>cn", "<cmd>cnewer<cr>", { desc = "Newer quickfix list" })
+
 vim.api.nvim_create_autocmd("LspAttach", {
 	callback = function(event)
+        vim.keymap.set("n", "gi", vim.lsp.buf.implementation, { buffer = event.buf, desc = "Go to implementation" })
+        vim.keymap.set("n", "gy", vim.lsp.buf.type_definition, { buffer = event.buf, desc = "Go to type definition" })
 		vim.keymap.set("n", "K", vim.lsp.buf.hover, {
 			buffer = event.buf,
 			desc = "LSP hover",
