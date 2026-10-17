@@ -35,15 +35,6 @@ vim.api.nvim_create_autocmd("LspAttach", {
 			desc = "Code action",
 		})
 
-		vim.keymap.set("n", "<leader>lf", function()
-			require("conform").format({
-				async = true,
-				lsp_format = "fallback",
-			})
-		end, {
-			buffer = event.buf,
-			desc = "Format buffer",
-		})
 	end,
 })
 

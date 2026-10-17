@@ -14,7 +14,7 @@ A lightweight, modular Lua configuration managed by lazy.nvim, with tools for Ja
 | Completion | nvim-cmp offers language-server, snippet, buffer, and filesystem-path suggestions. |
 | Snippets | LuaSnip loads VS Code-style snippets from friendly-snippets and supports expanding snippets and jumping through placeholders. |
 | Editing helpers | Automatic bracket/quote pairing with nvim-autopairs and comment toggling with Comment.nvim. |
-| Formatting | Conform is configured for Lua formatting with StyLua; the manual format action falls back to an attached LSP formatter. Format-on-save is not configured. |
+| Formatting | Conform formats Lua with StyLua, Rust with rustfmt, and web/configuration files with Prettier. Format a buffer or visual selection manually, with an attached LSP formatter as a fallback. Format-on-save is not configured. |
 | Git | Gitsigns shows changes in the gutter and supports navigating, previewing, staging, and resetting hunks. |
 | Terminal | ToggleTerm opens a horizontal terminal with a height of 15 lines. |
 | Debugging | nvim-dap and nvim-dap-ui provide breakpoints, stepping, a debugger UI, Rust debugging through CodeLLDB, and JavaScript/compiled TypeScript debugging through the Node debug adapter. |
@@ -75,7 +75,7 @@ Run these commands inside Neovim:
 
 ```vim
 :MasonUpdate
-:MasonInstall typescript-language-server rust-analyzer codelldb js-debug-adapter
+:MasonInstall typescript-language-server rust-analyzer codelldb js-debug-adapter prettier
 ```
 
 Wait for the installs to complete, then restart Neovim and open a source file from a project directory:
@@ -126,7 +126,7 @@ In an Oil buffer, edit directory entries and use `:w` to apply filesystem change
 | `<Space>lr` | Rename symbol |
 | `<Space>lR` | Find references with Telescope |
 | `<Space>la` | Show code actions |
-| `<Space>lf` | Format the buffer with Conform, using LSP formatting as a fallback |
+| `<Space>lf` | Format the buffer or visual selection with Conform, using LSP formatting as a fallback; available without an attached LSP |
 | `<Space>ls` | Search document symbols |
 | `<Space>lS` | Search workspace symbols |
 | `[d` / `]d` | Previous / next diagnostic |
@@ -134,11 +134,9 @@ In an Oil buffer, edit directory entries and use `:w` to apply filesystem change
 
 Use `<Space>lr` for rename and `<Space>lR` for the Telescope references picker. `gr` also finds references using the native LSP action.
 
-The format mapping is also registered on `LspAttach`. For a Lua buffer without an attached server, format manually with:
+Formatting is manual: press `<Space>lf` in normal mode for the buffer, or in visual mode for a selection (when the formatter supports ranges). No attached language server is required. Prettier handles JavaScript/JSX, TypeScript/TSX, JSON/JSONC, CSS/SCSS, HTML, YAML, and Markdown. Conform prefers a project's `node_modules/.bin/prettier`, then falls back to Prettier on Neovim's `PATH`, including a Mason installation. Project formatter configuration files are respected.
 
-```vim
-:lua require('conform').format({ async = true, lsp_format = 'fallback' })
-```
+Install Prettier using `:MasonInstall prettier`, or add it to a project's development dependencies with `npm install --save-dev --save-exact prettier`. For Rust, install the formatter with `rustup component add rustfmt`. StyLua is provided by the Homebrew prerequisites or can be installed with `:MasonInstall stylua`. Use `:ConformInfo` to check executable availability; missing formatters produce a notification when no LSP fallback is available.
 
 ### Completion and snippets
 
