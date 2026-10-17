@@ -20,7 +20,7 @@ A lightweight, modular Lua configuration managed by lazy.nvim, with tools for Ja
 | Debugging | nvim-dap and nvim-dap-ui provide breakpoints, stepping, a debugger UI, Rust debugging through CodeLLDB, and JavaScript/compiled TypeScript debugging through the Node debug adapter. |
 | Status line | Lualine displays mode, branch, diagnostics, filename, LSP status, filetype, progress, and cursor position. |
 | Keybinding help | Which-key displays available mappings and groups for search, LSP, Git hunks, and debugging. |
-| Tool management | Mason provides an interface for installing language servers, formatters, and debug adapters. Tool installation is manual. |
+| Tool management | Mason and mason-tool-installer automatically install missing language servers, formatters, and debug adapters from the list in `lua/plugins/mason.lua`. Existing tools are not automatically upgraded. |
 | Project inspection | `:ProjectRoot` prints the nearest root containing `package.json`, `Cargo.toml`, or `.git`. It does not change the working directory. |
 | Tree-sitter | Installs JavaScript, TypeScript, TSX, Rust, Lua, Vim, Vimdoc, and query parsers asynchronously and enables native syntax highlighting. Parsers are updated with the plugin through `:TSUpdate`. |
 
@@ -69,23 +69,26 @@ nvim
 
 On first launch, lazy.nvim downloads itself and installs the plugins. An internet connection is required. Wait for installation and build tasks to finish, then restart Neovim. Use `:Lazy` to inspect installation status or `:Lazy sync` to install and update plugins.
 
-### 4. Install language servers and debug adapters
+### 4. Let the development tools install
 
-Run these commands inside Neovim:
+After plugins are installed, restart Neovim. mason-tool-installer checks for missing tools three seconds after startup and installs them asynchronously:
 
-```vim
-:MasonUpdate
-:MasonInstall typescript-language-server rust-analyzer codelldb js-debug-adapter prettier
-```
+| Tools | Mason packages |
+| --- | --- |
+| Language servers | `typescript-language-server`, `rust-analyzer` |
+| Formatters | `stylua`, `prettier` |
+| Debug adapters | `codelldb`, `js-debug-adapter` |
 
-Wait for the installs to complete, then restart Neovim and open a source file from a project directory:
+Open `:Mason` to watch progress. Keep Neovim open until installation completes, then restart it before opening your project so newly installed language servers can attach:
 
 ```sh
 cd /path/to/your/project
 nvim .
 ```
 
-Mason adds its executables to Neovim's `PATH`. Language-server configuration lives in `lua/plugins/lsp.lua`, which loads Mason and completion capabilities before enabling the servers. There is no automatic tool-installation list or mason-lspconfig integration in this configuration. You can inspect installed tools with `:Mason`. See [Mason's requirements and commands](https://github.com/mason-org/mason.nvim#requirements) for package-specific dependencies.
+The tool list lives in `lua/plugins/mason.lua`. Existing tools are left at their installed versions. Use `:MasonToolsInstall` to retry missing installations immediately, or `:MasonToolsUpdate` to explicitly upgrade the listed tools. If installation fails, check `:MasonLog` and `:checkhealth mason`; Node.js/npm and other package-specific dependencies must be available. See [Mason's requirements](https://github.com/mason-org/mason.nvim#requirements) and [mason-tool-installer's commands](https://github.com/WhoIsSethDaniel/mason-tool-installer.nvim#commands).
+
+Mason adds its executables to Neovim's `PATH`. Language-server configuration lives in `lua/plugins/lsp.lua`, which loads Mason and completion capabilities before enabling the servers. No mason-lspconfig integration is needed. Rust itself and rustfmt remain managed by rustup; install the formatter with `rustup component add rustfmt`. Homebrew/system tools such as Neovim, Node.js, ripgrep, fd, and the Tree-sitter CLI are installed separately using the prerequisites above.
 
 Only `ts_ls` and `rust_analyzer` are enabled here. Lua has snippets and a formatter, but no configured Lua language server. To add another language server, install it and enable its configuration in `lua/plugins/lsp.lua`.
 
@@ -136,7 +139,7 @@ Use `<Space>lr` for rename and `<Space>lR` for the Telescope references picker. 
 
 Formatting is manual: press `<Space>lf` in normal mode for the buffer, or in visual mode for a selection (when the formatter supports ranges). No attached language server is required. Prettier handles JavaScript/JSX, TypeScript/TSX, JSON/JSONC, CSS/SCSS, HTML, YAML, and Markdown. Conform prefers a project's `node_modules/.bin/prettier`, then falls back to Prettier on Neovim's `PATH`, including a Mason installation. Project formatter configuration files are respected.
 
-Install Prettier using `:MasonInstall prettier`, or add it to a project's development dependencies with `npm install --save-dev --save-exact prettier`. For Rust, install the formatter with `rustup component add rustfmt`. StyLua is provided by the Homebrew prerequisites or can be installed with `:MasonInstall stylua`. Use `:ConformInfo` to check executable availability; missing formatters produce a notification when no LSP fallback is available.
+Prettier and StyLua are installed automatically through Mason. You can also add Prettier to a project's development dependencies with `npm install --save-dev --save-exact prettier`. For Rust, install the formatter with `rustup component add rustfmt`. A Homebrew installation of StyLua is optional because Mason provides it. Use `:ConformInfo` to check executable availability; missing formatters produce a notification when no LSP fallback is available.
 
 ### Completion and snippets
 
@@ -174,7 +177,7 @@ Comment.nvim uses its default mappings: `gcc` toggles the current line comment, 
 | `<Space>dt` | Terminate the debug session |
 | `<Space>du` | Toggle the debugger UI |
 
-Install the adapters through Mason before debugging. Open the debugger UI manually with `<Space>du`.
+Wait for the automatic Mason adapter installations to finish before debugging. Open the debugger UI manually with `<Space>du`.
 
 - **Rust:** Run `cargo build`, open a Rust source file, and start debugging. The launch configuration prompts for the executable, initially under the current directory's `target/debug/`. Start Neovim from the crate or workspace root.
 - **JavaScript:** Open the JavaScript file to run and start debugging. The adapter launches the current file with Node.js, using the workspace directory.
