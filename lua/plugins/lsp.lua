@@ -1,55 +1,20 @@
-require("mason").setup()
+return {
+  {
+    "neovim/nvim-lspconfig",
 
-local servers = { 'fortls', 'bashls', 'pyright', 'clangd', 'html', 'julials'}
+    config = function()
+      local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
-require("mason-lspconfig").setup({
-  ensure_installed = servers
-})
+      vim.lsp.config("ts_ls", {
+        capabilities = capabilities,
+      })
 
-local lsp_status_ok, lspconfig = pcall(require, 'lspconfig')
-if not lsp_status_ok then
-  return
-end
+      vim.lsp.config("rust_analyzer", {
+        capabilities = capabilities,
+      })
 
-local capabilities = require('cmp_nvim_lsp').default_capabilities()
-local root_dir = function()
-  return vim.fn.getcwd()
-end
-
---LSP servers 
-
-local on_attach = function() 
-  vim.keymap.set('n', 'K', vim.lsp.buf.hover, {buffer=0})
-  vim.keymap.set('n', 'gd', vim.lsp.buf.definition, {buffer=0})
-  vim.keymap.set('n', 'gtd', vim.lsp.buf.type_definition, {buffer=0})
-  vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, {buffer=0})
-  vim.keymap.set('n', 'gr', vim.lsp.buf.references, {buffer=0})
-  vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, {buffer=0})
-  
-  vim.keymap.set('n', '<leader>fd', vim.diagnostic_goto_next, {buffer=0})
-  vim.keymap.set('n', '<leader>pd', vim.diagnostic_goto_prev, {buffer=0})
-end
-
-require'lspconfig'.fortls.setup{
-    cmd = {
-        'fortls',
-        '--lowercase_intrisics',
-        '--hover_signature',
-        '--hover_language=fortran',
-        '--use_signature_help'
-    }
+      vim.lsp.enable("ts_ls")
+      vim.lsp.enable("rust_analyzer")
+    end,
+  },
 }
-
---For all the servers on_attach 
-for _, lsp in ipairs(servers) do
-  lspconfig[lsp].setup {
-    capabilities = capabilities,
-    on_attach = on_attach,
-    root_dir = root_dir,
-    flags = {
-      -- default in neovim 0.7+
-      debounce_text_changes = 150,
-    }
-  }
-end
-

@@ -1,20 +1,83 @@
-require('telescope').setup({
-  extensions = {
-    fzf = {
-      fuzzy = true,                    -- false will only do exact matching
-      override_generic_sorter = true,  -- override the generic sorter
-      override_file_sorter = true,     -- override the file sorter
-      case_mode = "smart_case",        -- or "ignore_case" or "respect_case"
-                                       -- the default case_mode is "smart_case"
-    }
-  }
-})
+return {
+	{
+		"nvim-telescope/telescope.nvim",
 
-local builtin = require('telescope.builtin')
+		dependencies = {
+			"nvim-lua/plenary.nvim",
+		},
 
-vim.keymap.set('n', '<leader>ff', builtin.find_files, {})
-vim.keymap.set('n', '<leader>fg', builtin.live_grep, {})
-vim.keymap.set('n', '<leader>fb', builtin.buffers, {})
-vim.keymap.set('n', '<leader>fh', builtin.help_tags, {})
+		keys = {
+			{
+				"<leader>ff",
+				function()
+					require("telescope.builtin").find_files()
+				end,
+				desc = "Find files",
+			},
 
-require('telescope').load_extension('fzf')
+			{
+				"<leader>fg",
+				function()
+					require("telescope.builtin").live_grep()
+				end,
+				desc = "Live grep",
+			},
+
+			{
+				"<leader>fb",
+				function()
+					require("telescope.builtin").buffers()
+				end,
+				desc = "Find buffers",
+			},
+
+			{
+				"<leader>fr",
+				function()
+					require("telescope.builtin").oldfiles()
+				end,
+				desc = "Recent files",
+			},
+
+			{
+				"<leader>fh",
+				function()
+					require("telescope.builtin").help_tags()
+				end,
+				desc = "Help tags",
+			},
+
+			{
+				"<leader>lD",
+				function()
+					require("telescope.builtin").lsp_definitions()
+				end,
+				desc = "LSP definitions",
+			},
+
+			{
+				"<leader>lr",
+				function()
+					require("telescope.builtin").lsp_references()
+				end,
+				desc = "LSP references",
+			},
+
+			{
+				"<leader>ls",
+				function()
+					require("telescope.builtin").lsp_document_symbols()
+				end,
+				desc = "Document symbols",
+			},
+
+			{
+				"<leader>lS",
+				function()
+					require("telescope.builtin").lsp_workspace_symbols()
+				end,
+				desc = "Workspace symbols",
+			},
+		},
+	},
+}
