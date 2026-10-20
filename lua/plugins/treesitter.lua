@@ -34,6 +34,8 @@ return {
         "vim",
         "vimdoc",
         "query",
+        "markdown",
+        "markdown_inline",
       }):await(function()
         vim.schedule(function()
           for _, buf in ipairs(vim.api.nvim_list_bufs()) do

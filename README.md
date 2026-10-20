@@ -20,16 +20,20 @@ A lightweight, modular Lua configuration managed by lazy.nvim, with tools for Ja
 | Git | Gitsigns shows changes in the gutter and supports navigating, previewing, staging, and resetting hunks. Diffview adds changed-file review, revision comparison, file history, and conflict resolution. |
 | Bookmarks | Harpoon keeps a small persistent list of files per working directory, with direct jumps and an editable menu. |
 | Surround editing | nvim-surround adds, changes, and removes quotes, brackets, tags, and other delimiters. |
+| Markdown rendering | render-markdown.nvim renders headings, code blocks, tables, lists, checkboxes, and callouts directly in markdown buffers. The cursor line shows raw markdown for editing. |
+| Icons | nvim-web-devicons and mini.icons provide file-type icons for the status line, pickers, file explorer, Git review, and markdown code blocks. They require a Nerd Font in the terminal. |
 | Health check | `:ConfigHealth` checks external executables, Tree-sitter CLI compatibility, configured Mason packages, and running language servers. |
 | Terminal | ToggleTerm opens a horizontal terminal with a height of 15 lines. |
 | Debugging | nvim-dap and nvim-dap-ui provide breakpoints, stepping, a debugger UI, Rust debugging through CodeLLDB, and JavaScript/compiled TypeScript debugging through the Node debug adapter. |
+| Color scheme | Everforest dark with the medium-contrast grey background, loaded at startup so every plugin picks up its colors. |
+| Centered layout | no-neck-pain.nvim centers the editing window at 120 columns automatically on startup and in new tabs, padding both sides with empty buffers. |
 | Status line | Lualine displays mode, branch, diagnostics, filename, LSP status, filetype, progress, and cursor position. |
 | Code navigation | Implementation/type jumps, call hierarchy, scoped search, persistent quickfix results, and Tree-sitter function/class/parameter text objects. |
 | Sessions | Persistence automatically saves workspace sessions on exit, with manual project restore, session selection, and last-session restore. |
 | Keybinding help | Which-key displays available mappings and groups for search, LSP, Git hunks, and debugging. |
 | Tool management | Mason and mason-tool-installer automatically install missing language servers, formatters, and debug adapters from the list in `lua/plugins/mason.lua`. Existing tools are not automatically upgraded. |
 | Project inspection | `:ProjectRoot` prints the nearest root containing `package.json`, `Cargo.toml`, or `.git`. It does not change the working directory. |
-| Tree-sitter | Installs JavaScript, TypeScript, TSX, Rust, Lua, Vim, Vimdoc, and query parsers asynchronously and enables native syntax highlighting. Parsers are updated with the plugin through `:TSUpdate`. |
+| Tree-sitter | Installs JavaScript, TypeScript, TSX, Rust, Lua, Vim, Vimdoc, query, Markdown, and inline Markdown parsers asynchronously and enables native syntax highlighting. Parsers are updated with the plugin through `:TSUpdate`. |
 
 ## Install on macOS
 
@@ -219,6 +223,7 @@ Sessions use Neovim's `sessionoptions` to restore file buffers, windows, tabs, a
 | `<Space>bn` / `<Space>bp` | Next / previous listed buffer |
 | `<Space>bb` | Switch to the alternate (previously used) buffer |
 | `<Space>bd` | Delete the current buffer with `:bdelete` |
+| `<Space>z` | Toggle the centered layout (no-neck-pain) |
 
 Window and buffer close actions do not force-discard unsaved changes. `:bdelete` can also close windows displaying that buffer. Use `<Space>fb` to choose a buffer with Telescope. On macOS, system shortcuts may intercept Ctrl-arrow keys; Neovim's built-in `<C-w>+`, `<C-w>-`, `<C-w>>`, and `<C-w><` also resize windows. These mappings apply in normal mode; leave terminal input mode first with `<C-\><C-n>`.
 
@@ -298,6 +303,10 @@ Bookmarks are grouped by working directory and persisted by Harpoon outside the 
 ### Surround editing
 
 Use normal-mode operators such as `ysiw"` to surround a word with double quotes, `cs"'` to change double quotes to single quotes, and `ds"` to remove surrounding double quotes. In visual mode, `S` followed by a delimiter surrounds the selection. See `:help nvim-surround` for bracket, tag, and custom delimiter operations.
+
+### Markdown rendering
+
+Markdown files render in the buffer automatically. Press `<Space>M` in a markdown buffer to toggle between rendered and raw views. See `:help render-markdown` for options.
 
 ### Debugging
 

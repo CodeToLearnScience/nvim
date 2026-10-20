@@ -1,6 +1,7 @@
 return {
   {
     "sindrets/diffview.nvim",
+    dependencies = { "nvim-tree/nvim-web-devicons" },
     cmd = { "DiffviewOpen", "DiffviewClose", "DiffviewFileHistory" },
     keys = {
       { "<leader>gd", "<cmd>DiffviewOpen<cr>", desc = "Review Git changes / conflicts" },
@@ -22,7 +23,7 @@ return {
     config = function()
       local actions = require("diffview.actions")
       require("diffview").setup({
-        use_icons = false,
+        use_icons = true,
         -- Avoid buffer-local leader mappings shadowing our existing groups.
         keymaps = {
           disable_defaults = true,
